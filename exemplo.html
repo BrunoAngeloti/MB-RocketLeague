@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js" integrity="sha512-n8IpKWzDnBOcBhRlHirMZOUvEq2bLRMuJGjuVqbzUJwtTsgwOgK5aS0c1JA647XWYfqvXve8k3PtZdzpipFjgg==" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
+    <title>Mão Robotica</title>
+</head>
+<body style="flex-direction: row; display: flex; gap: 20px;">
+    <script>
+        const scene = new THREE.Scene();
+        const aspect = window.innerWidth/2 / window.innerHeight;
+        scene.background = new THREE.Color( 0x2c2c2c );
+
+        const cameraOne = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 );
+        const cameraTwo = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 );
+
+        const rendererOne = new THREE.WebGLRenderer();
+        const rendererTwo = new THREE.WebGLRenderer();
+
+        rendererOne.setSize( window.innerWidth/2-20, window.innerHeight-20);
+        document.body.appendChild( rendererOne.domElement );
+        rendererTwo.setSize( window.innerWidth/2-20, window.innerHeight-20);
+        document.body.appendChild( rendererTwo.domElement );
+
+        const geometry = new THREE.SphereGeometry( 0.2, 32, 32);   
+        const materialGreen = new THREE.MeshBasicMaterial( { color: 0x008000 } );
+        const materialBlue = new THREE.MeshBasicMaterial( { color: 0x0000FF  } );
+
+        const cube = new THREE.Mesh( geometry, materialGreen );
+        const cube2 = new THREE.Mesh( geometry, materialBlue );
+
+        cube.position.set(-1,0,8);
+        cube2.position.set(1,0,8);
+        scene.add( cube );
+        scene.add( cube2 );
+
+        const light = new THREE.AmbientLight(0x404040);
+        scene.add(light)
+
+        const pointLight = new THREE.PointLight(0xffffff, 3, 100)
+        pointLight.position.set(10, 20, 40)
+        scene.add(pointLight)
+
+        cameraOne.position.set(0,1,10);
+        cameraOne.lookAt(cube.position)
+        cameraTwo.position.set(0,1,10);
+        cameraTwo.lookAt(cube2.position)
+
+        const plane = new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 80, 10, 10),
+            new THREE.MeshBasicMaterial({color: 0xff0000})
+        );
+
+        plane.rotation.x = -Math.PI / 2;
+        plane.position.y = -1;
+        scene.add(plane);
+
+        
+        addEventListener('keydown', function(e) {
+            if (e.keyCode == 87) {
+                cube.position.z -= 0.1;
+                cameraOne.position.z -= 0.1;
+            }
+            if (e.keyCode == 83) {
+                cube.position.z += 0.1;
+                cameraOne.position.z += 0.1;
+            }
+            if (e.keyCode == 65) {
+                cube.position.x -= 0.1;
+                cameraOne.position.x -= 0.1;
+            }
+            if (e.keyCode == 68) {
+                cube.position.x += 0.1;
+                cameraOne.position.x += 0.1;
+            }
+            if (e.keyCode == 38) {
+                cube2.position.z -= 0.1;
+                cameraTwo.position.z -= 0.1;
+            }
+            if (e.keyCode == 40) {
+                cube2.position.z += 0.1;
+                cameraTwo.position.z += 0.1;
+            }
+            if (e.keyCode == 37) {
+                cube2.position.x -= 0.1;
+                cameraTwo.position.x -= 0.1;
+            }
+            if (e.keyCode == 39) {
+                cube2.position.x += 0.1;
+                cameraTwo.position.x += 0.1;
+            }
+        });
+        
+
+        function animate() {
+            requestAnimationFrame( animate );
+
+            cameraOne.lookAt(cube.position)
+            cameraTwo.lookAt(cube2.position)
+            rendererOne.render( scene, cameraOne );
+            rendererTwo.render( scene, cameraTwo );
+        };
+
+        animate();
+    </script>
+</body>
+</html>
