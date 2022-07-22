@@ -4,11 +4,40 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js" integrity="sha512-n8IpKWzDnBOcBhRlHirMZOUvEq2bLRMuJGjuVqbzUJwtTsgwOgK5aS0c1JA647XWYfqvXve8k3PtZdzpipFjgg==" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <title>MB Kart</title>
 </head>
 <body>
     <script>
+        const scene = new THREE.Scene();
+        const aspect = window.innerWidth / window.innerHeight;
+        scene.background = new THREE.ImageUtils.loadTexture('../Images/Capa.png');
+
+        const cameraOne = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 );
+
+        const rendererOne = new THREE.WebGLRenderer();
+
+
+        rendererOne.setSize( 1260, 700);
+        document.body.appendChild( rendererOne.domElement );
+
+        const light = new THREE.AmbientLight(0x404040);
+        scene.add(light)
+
+        const pointLight = new THREE.PointLight(0xffffff, 3, 100)
+
         
+
+        function animate() {
+            requestAnimationFrame( animate );
+            rendererOne.render( scene, cameraOne );
+
+        };
+
+        animate();
     </script>
 </body>
 </html>
