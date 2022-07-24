@@ -28,7 +28,7 @@
         let obj;
         let mao;
 
-        loader.load( 'primeiroTeste.glb', function ( gltf ) {
+        loader.load( 'QuartoTeste.glb', function ( gltf ) {
             gltf.scene.scale.set(0.001,0.001,0.001);
 
             obj = gltf.scene
@@ -50,8 +50,8 @@
         const light = new THREE.AmbientLight(0xFFFFFF);
         scene.add(light) 
 
-        const pointLight = new THREE.PointLight(0xffffff, 3, 100)
-        pointLight.position.set(-0.5, 40, 0)
+        const pointLight = new THREE.PointLight(0xffffff, 0, 100)
+        pointLight.position.set(0, 70, 0)
         scene.add(pointLight)
 
         camera.position.z = 0;
@@ -63,27 +63,32 @@
         
         addEventListener('keydown', function(e) {
             if (e.keyCode == 87) {
-                camera.position.x += 0.1;
+                //camera.position.x += 0.1;
+                //obj.children[45].position.x += 5;
+                obj.children[45].up.x += 1;
             }
             if (e.keyCode == 83) {
-                camera.position.x -= 0.1;
+                //camera.position.x -= 0.1;
+                obj.children[45].position.x -= 5;
             }
             if (e.keyCode == 65) {
-                camera.rotation.x -= 0.1;
+                //camera.rotation.z -= 0.1;
                 //rotaciona a camera no proprio eixo z
                 
                 //camera.rotation.z += 0.1;
+                obj.children[45].rotation.y += 0.1;
 
             }
             if (e.keyCode == 68) {
-                camera.rotation.x += 0.1;
+                //camera.rotation.x += 0.1;
+                obj.children[45].rotation.y -= 0.1;
             }
             
         });
 
         function animate() {
             requestAnimationFrame( animate );     
-            console.log(obj.children[44])
+            console.log(obj.children)
             
             renderer.render( scene, camera );
         };

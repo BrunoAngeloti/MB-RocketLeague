@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js" integrity="sha512-n8IpKWzDnBOcBhRlHirMZOUvEq2bLRMuJGjuVqbzUJwtTsgwOgK5aS0c1JA647XWYfqvXve8k3PtZdzpipFjgg==" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script> 
+    <!-- <script src="http://localhost:4000/socket.io/socket.io.js"></script>  -->
+    <script src="https://server-robotic-hand.herokuapp.com/socket.io/socket.io.js"></script> 
+    <title>Mão Robotica</title>
+</head>
+<body>
+    <script>
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color( 0xffffff );
+
+        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.05, 1000 );
+
+
+        const loader = new THREE.GLTFLoader();
+
+        let obj;
+
+        loader.load('/Models/CarroPolicia.glb', function ( gltf ) {
+            gltf.scene.scale.set(0.05,0.05,0.05);
+
+            obj = gltf.scene
+
+            scene.add( gltf.scene );
+
+        }, undefined, function ( error ) {
+
+            console.error( error );
+
+        } );
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        const light = new THREE.AmbientLight(0xFFFFFF);
+        scene.add(light) 
+
+
+        camera.position.y = 2;
+        camera.position.y = 0.06;
+        camera.position.x = -0.55;
+        camera.rotation.x = -Math.PI/2;
+        camera.rotation.z = -Math.PI/2;
+        camera.rotation.y = (-Math.PI/2);
+        
+
+        function animate() {
+            requestAnimationFrame( animate );   
+            
+            renderer.render( scene, camera );
+        };
+
+        animate();
+    </script>
+</body>
+</html>
