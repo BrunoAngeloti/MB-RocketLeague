@@ -1,9 +1,13 @@
-let model, colliderCar, colliderCubo;
+let model, colliderCar, colliderCubo, playerTwo;
 let moveForward = false;
 let moveBackward = false;
 let moveLeft = false;
 let moveRight = false;
-let canJump = false;
+
+let moveForward2 = false;
+let moveBackward2 = false;
+let moveLeft2 = false;
+let moveRight2 = false;
 
 const velocity = 0.3
 
@@ -16,13 +20,13 @@ function setScene() {
 }
 
 function setCamera() {
-    const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    camera.rotation.set(0.8, 179.07, 0);
-    camera.position.set( 0, 5, -5 );
+    const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/2 / window.innerHeight, 0.1, 1000 );
+    //camera.rotation.set(0.8, 179.07, 0);
+    //camera.position.set( 0, 5, -5 );
     return camera;
 }
 
-function setCar() {
+function setPlayerOne() {
     const loader = new THREE.GLTFLoader();
     loader.load( 'CarroPolicia.glb', function ( gltf ) {
         try{
@@ -30,18 +34,33 @@ function setCar() {
 
             colliderCar = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()).setFromObject(gltf.scene.children[0]);
             
-            model.position.set( 0, 0, 0 );
+            model.position.set( 5, 0, 0 );
             scene.add( model );
         } catch(e){
             console.log(e);
         }     
-    } );
-    
+    } );  
+}
+
+function setPlayerTwo() {
+    const loader = new THREE.GLTFLoader();
+    loader.load( 'CarroEsportivo.glb', function ( gltf ) {
+        try{
+            playerTwo = gltf.scene.children[0];
+
+            //colliderCar = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()).setFromObject(gltf.scene.children[0]);
+            
+            playerTwo.position.set( -5, 0, 0 );
+            scene.add( playerTwo );
+        } catch(e){
+            console.log(e);
+        }     
+    } );  
 }
 
 function setRenderer(){
     const renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth-20, window.innerHeight-20 );
+    renderer.setSize( window.innerWidth/2-20, window.innerHeight-20 );
     document.body.appendChild( renderer.domElement );
     return renderer;
 }
@@ -71,15 +90,34 @@ function moveCar(){
     colliderCar.copy(model.children[0].geometry.boundingBox).applyMatrix4(model.matrixWorld);
 }
 
-function moveCamera() {
-    var rotation = model.rotation.y
+function moveCarTwo(){
+    if ( moveForward2 ){
+        playerTwo.translateZ( velocity );       
+    }
+    if ( moveBackward2 ){
+        playerTwo.translateZ( -velocity );       
+    }
+    if ( moveLeft2 ){
+        playerTwo.rotation.y += 0.05;       
+    }
+    if ( moveRight2 ){
+        playerTwo.rotation.y += -0.05;
+    }
+}
+
+function teste2(){
+    teste = !teste
+}
+
+function moveCamera(camera, car) {
+    var rotation = car.rotation.y
     var rotZ = Math.cos(rotation)
     var rotX = Math.sin(rotation)
     var distance = 10;
-    camera.position.x = model.position.x - (distance * rotX);
-    camera.position.y = model.position.y + 6;
-    camera.position.z = model.position.z - (distance * rotZ);
-    camera.lookAt(model.position);
+    camera.position.x = car.position.x - (distance * rotX);
+    camera.position.y = car.position.y + 6;
+    camera.position.z = car.position.z - (distance * rotZ);
+    camera.lookAt(car.position);
 }
 
 function detectCollision(){
@@ -88,13 +126,25 @@ function detectCollision(){
         model.position.set( Math.random() * 50, 0, Math.random() * 50 );
     }
 }
-
+let teste = false
 function animate() {
     requestAnimationFrame( animate );   
-    renderer.render( scene, camera );
+    if(teste){
+        renderer.render( scene, camera );
+        //deletar rendererTwo
+        rendererTwo.clear();
+
+    }else{
+        rendererTwo.render( scene, cameraTwo );
+        renderer.clear();
+    }
+    
+    
     
     moveCar()
-    moveCamera()
+    moveCarTwo()
+    moveCamera(camera, model)
+    moveCamera(cameraTwo, playerTwo)
     detectCollision()
 };
 
@@ -125,42 +175,46 @@ function setFloor() {
 
 const scene = setScene();
 const camera = setCamera();
-setCar();
+const cameraTwo = setCamera();
+setPlayerOne();
+setPlayerTwo();
 const renderer = setRenderer();
+const rendererTwo = setRenderer();
 const light = setLights();
 const cube = setCube(0,0,20);
-//const cube2 = setCube(10,0,20);
-//const cube3 = setCube(-10,0,20);
 const floor = setFloor();
-console.log(colliderCubo);
+
 
 const onKeyDown = function ( event ) {
 
     switch ( event.code ) {
 
         case 'ArrowUp':
+            moveForward2 = true;
+            break;
         case 'KeyW':
             moveForward = true;
             break;
 
         case 'ArrowLeft':
+            moveLeft2 = true;
+            break;
         case 'KeyA':
             moveLeft = true;
             break;
 
         case 'ArrowDown':
+            moveBackward2 = true;
+            break;
         case 'KeyS':
             moveBackward = true;
             break;
 
         case 'ArrowRight':
+            moveRight2 = true;
+            break;
         case 'KeyD':
             moveRight = true;
-            break;
-
-        case 'Space':
-            if ( canJump === true ) velocity.y += 350;
-            canJump = false;
             break;
 
     }
@@ -172,21 +226,29 @@ const onKeyUp = function ( event ) {
     switch ( event.code ) {
 
         case 'ArrowUp':
+            moveForward2 = false;
+            break;
         case 'KeyW':
             moveForward = false;
             break;
 
         case 'ArrowLeft':
+            moveLeft2 = false;
+            break;
         case 'KeyA':
             moveLeft = false;
             break;
 
         case 'ArrowDown':
+            moveBackward2 = false;
+            break;
         case 'KeyS':
             moveBackward = false;
             break;
 
         case 'ArrowRight':
+            moveRight2 = false;
+            break;
         case 'KeyD':
             moveRight = false;
             break;
