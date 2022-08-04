@@ -20,7 +20,7 @@ function setScene() {
 }
 
 function setCamera() {
-    const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/2 / window.innerHeight, 0.1, 1000 );
+    const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/2 / window.innerHeight, 0.1, 10000 );
     //camera.rotation.set(0.8, 179.07, 0);
     //camera.position.set( 0, 5, -5 );
     return camera;
@@ -134,9 +134,9 @@ function moveCamera(camera, car) {
     var rotation = car.rotation.y
     var rotZ = Math.cos(rotation)
     var rotX = Math.sin(rotation)
-    var distance = 55;
+    var distance = 80;
     camera.position.x = car.position.x - (distance * rotX);
-    camera.position.y = car.position.y + 35;
+    camera.position.y = car.position.y + 50;
     camera.position.z = car.position.z - (distance * rotZ);
     camera.lookAt(car.position);
 }
