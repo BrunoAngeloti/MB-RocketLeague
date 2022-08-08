@@ -14,3 +14,19 @@ p{
     font-weight: bold;
     font-family: 'Courier New', Courier, monospace;
 }
+
+#awsd {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    width: 128px;
+    height: 128px;
+}
+
+#arrows {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    width: 150px;
+    height: 150px;
+}

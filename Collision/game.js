@@ -22,8 +22,8 @@ class MainScene extends Scene3D {
 
     createMap(){
         // Top and bottom walls
-        this.createWall({ z: 10, width: 21, height: 2, depth: 1 })
-        this.createWall({ z: -10, width: 21, height: 4, depth: 1 })
+        this.createWall({ z: 10.05, width: 21, height: 2, depth: 1 })
+        this.createWall({ z: -10, width: 21, height: 6, depth: 1 })
 
         // Left wall
         this.createWall({ x: -10, z: -6.3, width: 1, height: 4, depth: 8.5 })
@@ -36,8 +36,12 @@ class MainScene extends Scene3D {
         this.createWall({ x: 10, y: 2.5, width: 1, height: 1, depth: 21.1 })
     }
 
+    randomHex() {
+        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+    }
+
     createBall() {
-        this.ball = this.add.sphere({ radius: 0.5 })
+        this.ball = this.add.sphere({ radius: 0.5 }, { lambert: { color: this.randomHex() } })
         this.ball.position.setY(10)
         this.physics.add.existing(this.ball)
 
@@ -71,7 +75,7 @@ class MainScene extends Scene3D {
     }
     
     async create() {
-        const {camera, lights} = await this.warpSpeed('-orbitControls')
+        const { camera } = await this.warpSpeed('-orbitControls')
 
         camera.position.set(0, 10, 20);
         camera.lookAt(0,0,0);
@@ -143,73 +147,51 @@ class MainScene extends Scene3D {
 
     }
 
+    moveCar(carro, moveForward, moveBackward, moveLeft, moveRight) {
+        // Pega a rotação do carro em relação ao mundo
+        const v3 = new THREE.Vector3()
+        const speed = 8
+        const rotation = carro.getWorldDirection(v3)
+        const theta = Math.atan2(rotation.x, rotation.z)
+        
+        // Condição para não sair do campo
+        if(carro.position.x > -10.1 && carro.position.x < 10.1){
+            // Movimenta o carro para frente ou para trás 
+            if ( moveForward ){
+                const x = Math.sin(theta) * speed, y = carro.body.velocity.y, z = Math.cos(theta) * speed
+                carro.body.setVelocity(x, y, z)        
+            } else if ( moveBackward ){
+                const x = Math.sin(theta) * -speed, y = carro.body.velocity.y, z = Math.cos(theta) * -speed
+                carro.body.setVelocity(x, y, z)      
+            } else{
+                carro.body.setVelocity(0, carro.body.velocity.y, 0)
+            }
+
+            // Gira o carro no próprio eixo
+            if ( moveLeft ){
+                carro.body.setAngularVelocityY(2)       
+            }else if ( moveRight ){
+                carro.body.setAngularVelocityY(-2)  
+            }else {
+                carro.body.setAngularVelocityY(0)
+            }
+        }else{
+            // Retonar o carro para o mapa
+            if(carro.position.x < -10.1){
+                carro.body.applyForceX(1)
+            }else{
+                carro.body.applyForceX(-1)
+            }
+        }    
+    }
+
 
     update(){
         if(this.carro){
-            const v3 = new THREE.Vector3()
-            const speed = 8
-            const rotation = this.carro.getWorldDirection(v3)
-            const theta = Math.atan2(rotation.x, rotation.z)
-            console.log(this.carro.position.x)
-            if(this.carro.position.x > -10.1 && this.carro.position.x < 10.1){
-                if ( this.moveForward ){
-                    const x = Math.sin(theta) * speed, y = this.carro.body.velocity.y, z = Math.cos(theta) * speed
-                    this.carro.body.setVelocity(x, y, z)        
-                } else if ( this.moveBackward ){
-                    const x = Math.sin(theta) * -speed, y = this.carro.body.velocity.y, z = Math.cos(theta) * -speed
-                    this.carro.body.setVelocity(x, y, z)      
-                } else{
-                    this.carro.body.setVelocity(0, this.carro.body.velocity.y, 0)
-                }
-
-                if ( this.moveLeft ){
-                    this.carro.body.setAngularVelocityY(2)       
-                }else if ( this.moveRight ){
-                    this.carro.body.setAngularVelocityY(-2)  
-                }else {
-                    this.carro.body.setAngularVelocityY(0)
-                }
-            }else{
-                if(this.carro.position.x < -10.1){
-                    this.carro.body.applyForceX(1)
-                }else{
-                    this.carro.body.applyForceX(-1)
-                }
-            }                   
+            this.moveCar(this.carro, this.moveForward, this.moveBackward, this.moveLeft, this.moveRight)    
         }  
-        
         if(this.carro2){
-            const v3 = new THREE.Vector3()
-            const speed = 8
-            const rotation = this.carro2.getWorldDirection(v3)
-            const theta = Math.atan2(rotation.x, rotation.z)
-        
-            if(this.carro2.position.x > -10.1 && this.carro2.position.x < 10.1){
-                if ( this.moveForward2 ){
-                    const x = Math.sin(theta) * speed, y = this.carro2.body.velocity.y, z = Math.cos(theta) * speed
-                    this.carro2.body.setVelocity(x, y, z)        
-                } else if ( this.moveBackward2 ){
-                    const x = Math.sin(theta) * -speed, y = this.carro2.body.velocity.y, z = Math.cos(theta) * -speed
-                    this.carro2.body.setVelocity(x, y, z)      
-                } else{
-                    this.carro2.body.setVelocity(0, this.carro2.body.velocity.y, 0)
-                }
-
-                if ( this.moveLeft2 ){
-                    this.carro2.body.setAngularVelocityY(2)       
-                }else if ( this.moveRight2 ){
-                    this.carro2.body.setAngularVelocityY(-2)  
-                }else {
-                    this.carro2.body.setAngularVelocityY(0)
-                }
-            }else{
-                if(this.carro2.position.x < -10.1){
-                    this.carro2.body.applyForceX(1)
-                }else{
-                    this.carro2.body.applyForceX(-1)
-                }
-            } 
-                        
+            this.moveCar(this.carro2, this.moveForward2, this.moveBackward2, this.moveLeft2, this.moveRight2)                     
         } 
         
         if(this.ball){
